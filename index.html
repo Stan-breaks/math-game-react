@@ -8,13 +8,68 @@
 
     <!-- Don't use this in production: -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+      body{
+        text-align: center;
+      }
+      h1{
+        font-size: 72px;
+      }
+      .incorrect{
+        color:red;
+      }
+      .winner{
+        color:rgb(4, 235, 4)
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="text/babel">
-    
       function MyApp() {
-        return <h1>Hello, world!</h1>;
+        const[state,setState]=React.useState({num1:2,
+         num2:4,
+         response:"",
+         incorrect:false,
+         score:0,
+        });
+        function updateResponse(event){
+          var ans=parseInt(event.target.value);
+          setState({...state, response: ans});
+        }
+        function evaluate(event){
+          if(event.key==='Enter'){
+            var ans=parseInt(event.target.value);
+            if (state.num1+state.num2===ans){
+             setState({...state,
+              num1: Math.ceil(Math.random()*10),
+              num2: Math.ceil(Math.random()*10),
+              response:'',
+              incorrect:false,
+              score:state.score+1
+             });
+            }
+            else{
+              setState({...state,
+                response:'',
+                incorrect:true,
+                score:(state.score===0?0:state.score-1)
+              })
+            }
+          }
+        }
+        if(state.score===10){
+          return(
+            <h1 className='winner'>YOU WON!</h1>
+          );
+        }
+        return (
+          <>
+          <h1 className={state.incorrect?'incorrect':''}>{state.num1}+{state.num2}</h1>
+          <input autoFocus={true}onChange={updateResponse} onKeyPress={evaluate}value={state.response}/>
+          <p>Score: {state.score}</p>
+          </>
+          );
       }
 
       const container = document.getElementById('root');
